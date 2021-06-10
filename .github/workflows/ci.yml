@@ -23,11 +23,14 @@ jobs:
           python-version: ${{ matrix.python-version }}
 
       - name: Run Tests
+        env:
+          PYTHON: ${{ matrix.python-version }}
         continue-on-error: true
         run: |
           mkdir reports
           cd reports
-          python --version >> report.log
+          touch ${PYTHON}_report.log
+          python --version >> ${PYTHON}_report.log
           python --version && sleep $(shuf -i 60-120 -n 1)
 
       - name: Save Job Artifacts
