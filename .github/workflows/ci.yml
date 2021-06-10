@@ -9,32 +9,31 @@ on:
       - master
 
 jobs:
-  setup:
-    name: Setup Tests
+  Test:
+    name: Run Tests
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: [3.5, 3.8, 3.10]
 
     steps:
-    - uses: actions/checkout@v2
-    - name: Fetch master to compare coverage
-      run: git fetch --depth=1 origin master
+      - name: Setup Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: ${{ matrix.python-version }}
 
-    - name: Run Setup
-      run: echo "In Setup"
-
-  test:
-    name: Setup Tests
-    runs-on: ubuntu-latest
-
-    steps:
       - name: Run Tests
-        run: echo "In Test"
+        run: |
+          mkdir reports
+          cd reports
+          python --version >> report.log
+          python --version && sleep $(shuf -i 60-120 -n 1)
 
-  Ne:
-    name: Setup Tests
-    runs-on: ubuntu-latest
-
-    steps:
-      - uses: actions/checkout@v2
-
-      - name: Run Setup
-        run: echo "In Setup"
+      - name: Save Job Artifacts
+        uses: actions/upload-artifact@v2
+        with:
+          name: Build-Artifacts
+          path: |
+            **/reports/**/*
+            test_root/log/**/*.log
+            *.log
